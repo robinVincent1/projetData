@@ -1,10 +1,17 @@
-from shiny import render, ui
-from shiny.express import input
+from pathlib import Path
+from shiny import ui, render, App
+import pandas as pd
 
-ui.panel_title("Hello Shiny!")
-ui.input_slider("n", "N", 0, 100, 20)
+df = pd.read_csv(Path(__file__).parent / "Extraction-finale_enquete-2023DS.csv")
 
+app_ui = ui.page_fluid(
+    ui.output_table("salmon_species"),
+)
 
-@render.text
-def txt():
-    return f"n*2 is {input.n() * 2}"
+def server(output):
+    @output
+    @render.table
+    def salmon_species():
+        return df
+
+app = App(app_ui, server)

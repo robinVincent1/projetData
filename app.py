@@ -3,9 +3,19 @@ from dash import Dash, dcc, html, Output, Input
 import plotly.express as px
 from pathlib import Path
 from scipy import stats
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 # Load the data
 df = pd.read_excel(Path(__file__).parent / 'Extraction-finale_enquete-2023DS.xlsx')
+pca_columns = ['Quel est votre salaire brut ANNUEL AVEC PRIMES ?','Quelle est la durée de votre CDD ?','Depuis combien de mois occupez-vous cet emploi ?'] # Replace with actual column names
+pca_df = df[pca_columns].dropna()
+pca_df = StandardScaler().fit_transform(pca_df)
+
+# Perform PCA
+pca = PCA(n_components=2)
+principal_components = pca.fit_transform(pca_df)
+pca_result_df = pd.DataFrame(data=principal_components, columns=['PC1', 'PC2'])
 
 app = Dash(__name__)
 
@@ -32,7 +42,10 @@ app.layout = html.Div([
     html.Div(id='anova-result'),
 
     html.H2(children='Salary Distribution by Education', style={'textAlign': 'center'}),
-    dcc.Graph(id='education-graph')
+    dcc.Graph(id='education-graph'),
+
+    html.H2(children='Principal Component Analysis (PCA)', style={'textAlign': 'center'}),
+    dcc.Graph(id='pca-graph'),
 ])
 
 # Callback to update the genre graph
@@ -77,5 +90,13 @@ def update_education_graph(_, __):
     labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Average Annual Salary with Bonuses'})
     return fig
 
+@app.callback(
+    Output('pca-graph', 'figure'),
+    [Input('genre-dropdown', 'value'),  # Maintaining the dependency to refresh the graph.
+     Input('company-size-dropdown', 'value')]
+)
+def update_pca_graph(_, __):
+    fig = px.scatter(pca_result_df, x='PC1', y='PC2', title='PCA Result')
+    return fig
 
 app.run_server(debug=True)

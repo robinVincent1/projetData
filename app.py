@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 
 # Load the data
 df = pd.read_excel(Path(__file__).parent / 'Extraction-finale_enquete-2023DS.xlsx')
+telework_salary_df = df.groupby('Combien de jours par semaine êtes-vous en télétravail ? ')['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].mean().reset_index()
 pca_columns = ['Quel est votre salaire brut ANNUEL AVEC PRIMES ?','Quelle est la durée de votre CDD ?','Depuis combien de mois occupez-vous cet emploi ?'] # Replace with actual column names
 pca_df = df[pca_columns].dropna()
 pca_df = StandardScaler().fit_transform(pca_df)
@@ -46,6 +47,11 @@ app.layout = html.Div([
 
     html.H2(children='Principal Component Analysis (PCA)', style={'textAlign': 'center'}),
     dcc.Graph(id='pca-graph'),
+    
+    html.H2(children='Average Salary by Telework Days', style={'textAlign': 'center'}),
+    dcc.Graph(id='telework-days-bar-chart'),
+    
+    html.Div(id='telework-anova-result'),
 ])
 
 # Callback to update the genre graph
@@ -98,5 +104,35 @@ def update_education_graph(_, __):
 def update_pca_graph(_, __):
     fig = px.scatter(pca_result_df, x='PC1', y='PC2', title='PCA Result')
     return fig
+
+# Callback to update the telework days bar chart
+@app.callback(
+    Output('telework-days-bar-chart', 'figure'),
+    Input('genre-dropdown', 'value')  # Using an existing dropdown as a trigger
+)
+def update_telework_days_bar_chart(_):
+    fig = px.bar(telework_salary_df, x='Combien de jours par semaine êtes-vous en télétravail ? ', y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?',
+                 labels={'Combien de jours par semaine êtes-vous en télétravail ? ': 'Telework Days per Week',
+                         'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Average Annual Salary with Bonuses'})
+    return fig
+
+# Callback pour calculer et afficher le résultat de l'ANOVA
+@app.callback(
+    Output('telework-anova-result', 'children'),
+    Input('genre-dropdown', 'value')  # Utiliser n'importe quel Input existant pour déclencher le callback
+)
+def perform_telework_anova(_):
+    # Préparer les données pour l'ANOVA
+    anova_groups = [group['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].dropna() for name, group in df.groupby('Combien de jours par semaine êtes-vous en télétravail ? ')]
+
+    # Réaliser l'ANOVA
+    anova_result = stats.f_oneway(*anova_groups)
+
+    # Renvoyer le résultat de l'ANOVA
+    return html.Div([
+        html.P(f'ANOVA F-statistic: {anova_result.statistic:.2f}'),
+        html.P(f'ANOVA p-value: {anova_result.pvalue:.4f}')
+    ])
+
 
 app.run_server(debug=True)

@@ -1,6 +1,7 @@
 import pandas as pd
 from dash import Dash, dcc, html, Output, Input
 import plotly.express as px
+from sklearn.cluster import KMeans
 from pathlib import Path
 from scipy import stats
 from sklearn.decomposition import PCA
@@ -52,6 +53,28 @@ app.layout = html.Div([
     dcc.Graph(id='telework-days-bar-chart'),
     
     html.Div(id='telework-anova-result'),
+
+    html.H2(children='Correlation Heatmap', style={'textAlign': 'center'}),
+    dcc.Graph(id='correlation-heatmap'),
+
+    html.H2(children='Clustering Analysis', style={'textAlign': 'center'}),
+    dcc.Graph(id='clustering-result'),
+
+    html.H2(children='Folium Map', style={'textAlign': 'center'}),
+    html.Iframe(
+        id='map',
+        srcDoc=open('carteSalaireMoyen.html', 'r').read(),
+        width='100%',
+        height='600px'
+    ),
+
+    html.H2(children='Folium Map', style={'textAlign': 'center'}),
+    html.Iframe(
+        id='map',
+        srcDoc=open('carteSalaireMoyenWorld.html', 'r').read(),
+        width='100%',
+        height='600px'
+    ),
 ])
 
 # Callback to update the genre graph
@@ -134,5 +157,46 @@ def perform_telework_anova(_):
         html.P(f'ANOVA p-value: {anova_result.pvalue:.4f}')
     ])
 
+@app.callback(
+    Output('correlation-heatmap', 'figure'),
+    [Input('genre-dropdown', 'value'),  # Utiliser un Input existant pour déclencher le callback
+     Input('company-size-dropdown', 'value')]
+)
+def update_correlation_heatmap(_, __):
+    # Sélectionner les colonnes pertinentes pour la corrélation
+    cols_for_correlation = ['Quel est votre salaire brut ANNUEL AVEC PRIMES ?', 'Combien de jours par semaine êtes-vous en télétravail ? ', 'Depuis combien de mois occupez-vous cet emploi ?']  # Ajoutez d'autres colonnes si nécessaire
+    correlation_df = df[cols_for_correlation].dropna()
+
+    # Calculer la matrice de corrélation
+    corr_matrix = correlation_df.corr()
+
+    # Créer la heatmap de corrélation
+    fig = px.imshow(corr_matrix, text_auto=True, aspect="auto", 
+                    labels=dict(x="Variable", y="Variable", color="Correlation"),
+                    x=corr_matrix.columns, y=corr_matrix.columns)
+
+    return fig
+
+@app.callback(
+    Output('clustering-result', 'figure'),
+    [Input('genre-dropdown', 'value'),  # Peut utiliser n'importe quel Input existant
+     Input('company-size-dropdown', 'value')]
+)
+def perform_clustering_analysis(_, __):
+    # Sélectionner et préparer les données pour le clustering
+    clustering_columns = ['Quel est votre salaire brut ANNUEL AVEC PRIMES ?','Combien de jours par semaine êtes-vous en télétravail ? ']
+    clustering_df = df[clustering_columns].dropna()
+    clustering_df = StandardScaler().fit_transform(clustering_df)
+
+    # Effectuer le clustering
+    kmeans = KMeans(n_clusters=4)  # Choisissez le nombre de clusters approprié
+    clusters = kmeans.fit_predict(clustering_df)
+
+    # Créer une visualisation pour les clusters
+    fig = px.scatter(x=clustering_df[:, 0], y=clustering_df[:, 1], color=clusters, 
+                     labels={'x': clustering_columns[0], 'y': clustering_columns[1]},
+                     title='Cluster Analysis of Graduates')
+
+    return fig
 
 app.run_server(debug=True)

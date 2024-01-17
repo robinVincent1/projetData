@@ -23,9 +23,9 @@ app = Dash(__name__)
 
 # App layout
 app.layout = html.Div([
-    html.H1(children='Salary Analysis Dashboard', style={'textAlign': 'center'}),
+    html.H1(children='Dashboard des analyses des salaires', style={'textAlign': 'center'}),
 
-    html.H2(children='Salary Distribution by Gender', style={'textAlign': 'center'}),
+    html.H2(children='Distribution des salaires par sexe', style={'textAlign': 'center'}),
     dcc.Dropdown(
         id='genre-dropdown',
         options=[{'label': i, 'value': i} for i in df['Genre'].dropna().unique()],
@@ -33,7 +33,7 @@ app.layout = html.Div([
     ),
     dcc.Graph(id='genre-graph'),
 
-    html.H2(children='Salary Distribution by Company Size', style={'textAlign': 'center'}),
+    html.H2(children="Distribution des salaires par taille d'entreprise", style={'textAlign': 'center'}),
     dcc.Dropdown(
         id='company-size-dropdown',
         options=[{'label': i, 'value': i} for i in df['Nombre de salarié·e·s de votre employeur / entreprise'].dropna().unique()],
@@ -43,24 +43,24 @@ app.layout = html.Div([
 
     html.Div(id='anova-result'),
 
-    html.H2(children='Salary Distribution by Education', style={'textAlign': 'center'}),
+    html.H2(children="Distribution des salaires en fonction de la filiaire d'origine", style={'textAlign': 'center'}),
     dcc.Graph(id='education-graph'),
 
     html.H2(children='Principal Component Analysis (PCA)', style={'textAlign': 'center'}),
     dcc.Graph(id='pca-graph'),
     
-    html.H2(children='Average Salary by Telework Days', style={'textAlign': 'center'}),
+    html.H2(children='Salaire moyen en fonction du nombre de jours en télétravail', style={'textAlign': 'center'}),
     dcc.Graph(id='telework-days-bar-chart'),
     
     html.Div(id='telework-anova-result'),
 
-    html.H2(children='Correlation Heatmap', style={'textAlign': 'center'}),
+    html.H2(children='Matrice des corrélations ', style={'textAlign': 'center'}),
     dcc.Graph(id='correlation-heatmap'),
 
-    html.H2(children='Clustering Analysis', style={'textAlign': 'center'}),
+    html.H2(children='Analyse de clusters', style={'textAlign': 'center'}),
     dcc.Graph(id='clustering-result'),
 
-    html.H2(children='Folium Map', style={'textAlign': 'center'}),
+    html.H2(children='Salaire moyen en fonction de la région', style={'textAlign': 'center'}),
     html.Iframe(
         id='map',
         srcDoc=open('carteSalaireMoyen.html', 'r').read(),
@@ -68,7 +68,7 @@ app.layout = html.Div([
         height='600px'
     ),
 
-    html.H2(children='Folium Map', style={'textAlign': 'center'}),
+    html.H2(children='Salaire moyen en fonction du pays', style={'textAlign': 'center'}),
     html.Iframe(
         id='map',
         srcDoc=open('carteSalaireMoyenWorld.html', 'r').read(),

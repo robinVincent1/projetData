@@ -19,63 +19,79 @@ pca = PCA(n_components=2)
 principal_components = pca.fit_transform(pca_df)
 pca_result_df = pd.DataFrame(data=principal_components, columns=['PC1', 'PC2'])
 
-app = Dash(__name__)
+app = Dash(__name__, external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'])
+
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
 
 # App layout
 app.layout = html.Div([
-    html.H1(children='Dashboard des analyses des salaires', style={'textAlign': 'center'}),
+    html.H1(children='Dashboard des analyses des salaires', style={'textAlign': 'center', "font-size": "300%"}),
+    html.Div([
+        html.Div([
+            html.H2(children='Distribution des salaires par sexe', style={'textAlign': 'center'}),
+            dcc.Dropdown(
+                id='genre-dropdown',
+                options=[{'label': i, 'value': i} for i in df['Genre'].dropna().unique()],
+                value=df['Genre'].dropna().unique()[0]
+            ),
+            dcc.Graph(id='genre-graph'),
+        ], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
 
-    html.H2(children='Distribution des salaires par sexe', style={'textAlign': 'center'}),
-    dcc.Dropdown(
-        id='genre-dropdown',
-        options=[{'label': i, 'value': i} for i in df['Genre'].dropna().unique()],
-        value=df['Genre'].dropna().unique()[0]
-    ),
-    dcc.Graph(id='genre-graph'),
-
-    html.H2(children="Distribution des salaires par taille d'entreprise", style={'textAlign': 'center'}),
-    dcc.Dropdown(
-        id='company-size-dropdown',
-        options=[{'label': i, 'value': i} for i in df['Nombre de salarié·e·s de votre employeur / entreprise'].dropna().unique()],
-        value=df['Nombre de salarié·e·s de votre employeur / entreprise'].dropna().unique()[0]
-    ),
-    dcc.Graph(id='company-size-graph'),
+        html.Div([
+            html.H2(children="Distribution des salaires par taille d'entreprise", style={'textAlign': 'center'}),
+            dcc.Dropdown(
+                id='company-size-dropdown',
+                options=[{'label': i, 'value': i} for i in df['Nombre de salarié·e·s de votre employeur / entreprise'].dropna().unique()],
+                value=df['Nombre de salarié·e·s de votre employeur / entreprise'].dropna().unique()[0]
+            ),
+            dcc.Graph(id='company-size-graph'),
+        ], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
+    ], className='row'),  # Utilisez la classe de grille CSS pour aligner les éléments horizontalement
 
     html.Div(id='anova-result'),
-
     html.H2(children="Distribution des salaires en fonction de la filiaire d'origine", style={'textAlign': 'center'}),
     dcc.Graph(id='education-graph'),
 
     html.H2(children='Principal Component Analysis (PCA)', style={'textAlign': 'center'}),
     dcc.Graph(id='pca-graph'),
-    
+
     html.H2(children='Salaire moyen en fonction du nombre de jours en télétravail', style={'textAlign': 'center'}),
     dcc.Graph(id='telework-days-bar-chart'),
-    
+
     html.Div(id='telework-anova-result'),
 
-    html.H2(children='Matrice des corrélations ', style={'textAlign': 'center'}),
+    html.H2(children='Matrice des corrélations', style={'textAlign': 'center'}),
     dcc.Graph(id='correlation-heatmap'),
 
     html.H2(children='Analyse de clusters', style={'textAlign': 'center'}),
     dcc.Graph(id='clustering-result'),
+html.H2(children="L'influence de la situation géographique", style={'textAlign': 'center',"font-size": "500%"}),
+html.Div([
+    html.Div([
+        html.H2(children='Salaire moyen en fonction de la région', style={'textAlign': 'center'}),
+        html.Iframe(
+            id='map',
+            srcDoc=open('carteSalaireMoyen.html', 'r').read(),
+            width='100%',
+            height='600px'
+        ),
+    ], className='six columns'),
 
-    html.H2(children='Salaire moyen en fonction de la région', style={'textAlign': 'center'}),
-    html.Iframe(
-        id='map',
-        srcDoc=open('carteSalaireMoyen.html', 'r').read(),
-        width='100%',
-        height='600px'
-    ),
-
-    html.H2(children='Salaire moyen en fonction du pays', style={'textAlign': 'center'}),
-    html.Iframe(
-        id='map',
-        srcDoc=open('carteSalaireMoyenWorld.html', 'r').read(),
-        width='100%',
-        height='600px'
-    ),
+    html.Div([
+        html.H2(children='Salaire moyen en fonction du pays', style={'textAlign': 'center'}),
+        html.Iframe(
+            id='map',
+            srcDoc=open('carteSalaireMoyenWorld.html', 'r').read(),
+            width='100%',
+            height='600px'
+        ),
+    ], className='six columns'),
+], className='row'),
 ])
+
 
 # Callback to update the genre graph
 @app.callback(

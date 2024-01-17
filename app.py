@@ -36,6 +36,28 @@ colors = {
     'background': '#111111',
     'text': '#7FDBFF'
 }
+def perform_sector_anova():
+    # Définir un seuil minimum de réponses par secteur
+    min_responses_per_sector = 5
+
+    # Filtrer les secteurs avec suffisamment de réponses
+    anova_data = [df[df['Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?'] == sector]['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].dropna() 
+                  for sector in sectors if len(df[df['Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?'] == sector]) >= min_responses_per_sector]
+
+    # Vérifier s'il y a suffisamment de données pour effectuer l'ANOVA
+    if len(anova_data) > 1:
+        anova_result = stats.f_oneway(*anova_data)
+        return html.Div([
+            html.P(f'ANOVA sur le secteur d\'activité - F-statistic: {anova_result.statistic:.2f}'),
+            html.P(f'ANOVA sur le secteur d\'activité - p-value: {anova_result.pvalue:.4f}')
+        ])
+    else:
+        return html.Div([
+            html.P('Pas assez de données pour effectuer l\'ANOVA sur les secteurs d\'activité.')
+        ])
+    
+anova_result = perform_sector_anova()
+
 
 def create_genre_graph():
     filtered_df = df[df['Genre'].isin(['Femme', 'Homme'])]
@@ -248,31 +270,6 @@ html.Div([
 ])
 
 
-
-# Callback pour effectuer l'ANOVA sur le secteur d'activité
-@app.callback(
-    Output('sector-anova-result', 'children'),
-    Input('genre-dropdown', 'value'),
-)
-def perform_sector_anova(_):
-    # Définir un seuil minimum de réponses par secteur
-    min_responses_per_sector = 5
-
-    # Filtrer les secteurs avec suffisamment de réponses
-    anova_data = [df[df['Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?'] == sector]['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].dropna() 
-                  for sector in sectors if len(df[df['Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?'] == sector]) >= min_responses_per_sector]
-
-    # Vérifier s'il y a suffisamment de données pour effectuer l'ANOVA
-    if len(anova_data) > 1:
-        anova_result = stats.f_oneway(*anova_data)
-        return html.Div([
-            html.P(f'ANOVA sur le secteur d\'activité - F-statistic: {anova_result.statistic:.2f}'),
-            html.P(f'ANOVA sur le secteur d\'activité - p-value: {anova_result.pvalue:.4f}')
-        ])
-    else:
-        return html.Div([
-            html.P('Pas assez de données pour effectuer l\'ANOVA sur les secteurs d\'activité.')
-        ])
 
 
 

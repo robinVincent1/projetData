@@ -5,6 +5,6 @@ pathlib
 scipy
 plotly
 seaborn
-matplotlib.pyplot
+matplotlib
 scikit-learn
 numpy

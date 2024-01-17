@@ -1,7 +1,6 @@
 pandas
 dash
 plotly.express
-sklearn.clusters
 pathlib
 scipy
 plotly.tools

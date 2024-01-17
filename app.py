@@ -204,10 +204,6 @@ styles = {
 # App layout
 app.layout = html.Div([
     html.H1('Quels sont les principaux facteurs qui influencent la variation des salaires des diplômés ?', style=styles['title']),
-    
-    html.Div([
-        dcc.Graph(figure=loi_normale, style={'width': '70%', 'margin': '0 auto'})
-    ], style=styles['sub-header']),
 
     html.P("Salaire en fonction de la structure de l'entreprise",style=styles['header']),
 
@@ -245,6 +241,16 @@ app.layout = html.Div([
     ),
 
     html.P("Salaire en fonction des caractéristiques de l'individu",style=styles['header']),
+    html.Div([
+        html.Div([
+            dcc.Graph(figure=loi_normale, style={'width': '70%', 'margin': '0 auto'})
+        ], style=styles['sub-header'], className='six columns'),
+
+        html.Div([
+            html.H3('Distribution des salaires par sexe', style=styles['sub-header']),
+            dcc.Graph(figure=genre_graph)
+        ], className='six columns'),
+    ], className='row'),
 
     html.Div([
             html.H3('Distribution des salaires par sexe', style=styles['sub-header']),

@@ -32,6 +32,7 @@ colors = {
 # App layout
 app.layout = html.Div([
     html.H1(children='Dashboard des analyses des salaires', style={'textAlign': 'center', "font-size": "300%"}),
+     dcc.Graph(id='employer-status-boxplot'),
     dcc.Graph(id='seaborn-graph'),
     html.Div([
         html.Div([
@@ -95,6 +96,20 @@ html.Div([
     ], className='six columns'),
 ], className='row'),
 ])
+
+@app.callback(
+    Output('employer-status-boxplot', 'figure'),
+    [Input('genre-dropdown', 'value'),  # Utiliser un dropdown existant comme déclencheur
+     Input('company-size-dropdown', 'value')]
+)
+def update_employer_status_boxplot(_, __):
+    # Filtrer le DataFrame
+    filtered_df = df[df['Quel est le statut de votre employeur / entreprise ?'].isin(['Secteur privé', 'Secteur public'])]
+
+    # Créer le boxplot
+    fig = px.box(filtered_df, x='Quel est le statut de votre employeur / entreprise ?', y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?')
+
+    return fig
 
 @app.callback(
     Output('seaborn-graph', 'figure'),

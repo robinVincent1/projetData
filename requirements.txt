@@ -1,0 +1,12 @@
+pandas
+dash
+plotly.express
+sklearn.clusters
+pathlib
+scipy
+plotly.tools
+seaborn
+matplotlib.pyplot
+sklearn.decomposition
+klearn.preprocessing
+numpy

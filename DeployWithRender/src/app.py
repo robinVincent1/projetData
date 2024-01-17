@@ -303,4 +303,5 @@ app.layout = html.Div([
 ], className='row'),
 ])
 
+server = app.server
 app.run_server(debug=True)

@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 # Load the data
-df = pd.read_excel(Path(__file__).parent / 'Extraction-finale_enquete-2023DS.xlsx')
+df = pd.read_excel(Path(__file__).parent / 'Extraction finale_enquete 2023DS (1).xlsx')
 telework_salary_df = df.groupby('Combien de jours par semaine êtes-vous en télétravail ? ')['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].mean().reset_index()
 pca_columns = ['Quel est votre salaire brut ANNUEL AVEC PRIMES ?','Quelle est la durée de votre CDD ?','Depuis combien de mois occupez-vous cet emploi ?'] # Replace with actual column names
 pca_df = df[pca_columns].dropna()

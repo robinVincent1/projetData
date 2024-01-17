@@ -7,11 +7,11 @@ from pathlib import Path
 
 
 # Charger le fichier de données de l'utilisateur
-df = pd.read_excel(Path(__file__).parent / 'Extraction-finale_enquete-2023DS.xlsx')
+df = pd.read_excel(Path(__file__).parent / 'Extraction finale_enquete 2023DS (1).xlsx')
 
 # Calculer la moyenne des salaires par région
-salaires_par_region = df.groupby('Dans quel pays ?')['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].mean().reset_index()
-salaires_par_region = salaires_par_region.rename(columns={'Dans quel pays ?': 'name_fr', 'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'salaire_moyen'})
+salaires_par_region = df.groupby('DansFrancequelFrancepaysFrance?')['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].mean().reset_index()
+salaires_par_region = salaires_par_region.rename(columns={'DansFrancequelFrancepaysFrance?': 'name_fr', 'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'salaire_moyen'})
 
 # Charger les données géographiques des régions françaises
 gdf_regions = gpd.read_file('worldMap.json')

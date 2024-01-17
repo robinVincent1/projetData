@@ -67,7 +67,7 @@ def create_genre_graph():
 genre_graph = create_genre_graph()
 
 def create_employee_count_graph():
-    choices = ["De 50 à 249 salarié·e·s", "5 000 salarié·e·s ou plus", "De 20 à 49 salarié·e·s", "De 10 à 19 salarié·e·s ", "250 à  4 999 salarié·e·s ", " Moins de 10 salarié·e·s"]
+    choices = ["5 000 salarié·e·s ou plus", "250 à  4 999 salarié·e·s ","De 50 à 249 salarié·e·s", "De 20 à 49 salarié·e·s", "De 10 à 19 salarié·e·s "," Moins de 10 salarié·e·s"]
     filtered_df = df[df['Nombre de salarié·e·s de votre employeur / entreprise'].isin(choices)]
     fig = px.box(filtered_df, x='Nombre de salarié·e·s de votre employeur / entreprise', y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?')
     return fig
@@ -195,33 +195,42 @@ def perform_clustering_analysis():
 
 clustering_result = perform_clustering_analysis()
 # App layout
+styles = {
+    'title': {'textAlign': 'center', 'padding': '20px', 'fontSize': 30, 'fontWeight': 'bold', 'color': 'black'},
+    'header': {'textAlign': 'center', 'padding': '10px', 'fontSize': 22, 'fontWeight': 'bold', 'color': 'black'},
+    'sub-header': {'textAlign': 'center', 'padding': '5px', 'fontSize': 18, 'fontWeight': 'bold', 'color': 'black'},
+    'graph-container': {'padding': '20px'}
+}
+
+# App layout
 app.layout = html.Div([
-    html.H1(children='Dashboard des analyses des salaires', style={'textAlign': 'center', "font-size": "300%"}),
-    dcc.Graph(id='seaborn-graph'
-              ,figure=loi_normale),
+    html.H1('Tableau de bord des analyses des salaires', style=styles['title']),
+    
+    html.Div([
+        dcc.Graph(figure=loi_normale, style={'width': '70%', 'margin': '0 auto'})
+    ], style={'textAlign': 'center'}),
+    
     html.Div([
         html.Div([
-    dcc.Graph(id='executive-status-boxplot',
-              figure=boxplot_cadre),
-], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
-    html.Div([
-     dcc.Graph(id='employer-status-boxplot'
-               ,figure=boxplot_employer),
-], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
-], className='row'),  # Utilisez la classe de grille CSS pour aligner les éléments horizontalement
-    html.Div([
-        html.Div([
-            html.H2(children='Distribution des salaires par sexe', style={'textAlign': 'center'}),
-            dcc.Graph(id='genre-graph',
-                      figure=genre_graph),
-        ], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
+            dcc.Graph(figure=boxplot_cadre, style=styles['graph-container'])
+        ], className='six columns'),
 
         html.Div([
-            html.H2(children="Distribution des salaires par taille d'entreprise", style={'textAlign': 'center'}),
-            dcc.Graph(id='company-size-graph',
-                      figure=employee_count_graph),
-        ], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
-    ], className='row'),  # Utilisez la classe de grille CSS pour aligner les éléments horizontalement
+            dcc.Graph(figure=boxplot_employer, style=styles['graph-container'])
+        ], className='six columns'),
+    ], className='row'),
+
+    html.Div([
+        html.Div([
+            html.H3('Distribution des salaires par sexe', style=styles['sub-header']),
+            dcc.Graph(figure=genre_graph)
+        ], className='six columns'),
+
+        html.Div([
+            html.H3('Distribution des salaires par taille d\'entreprise', style=styles['sub-header']),
+            dcc.Graph(figure=employee_count_graph)
+        ], className='six columns'),
+    ], className='row'),
 
             # Créer un histogramme des salaires moyens par secteur
     html.H2(children='Salaire moyen par secteur d’activité', style={'textAlign': 'center'}),
@@ -233,7 +242,7 @@ app.layout = html.Div([
             y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?', 
             labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire Moyen', 
                     'Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?': 'Secteur d’Activité'},
-            title='Salaire moyen par secteur d’activité'
+            title='Salaire moyen par secteur d’activité',
         )
     ),
 
@@ -242,34 +251,31 @@ app.layout = html.Div([
     dcc.Graph(id='education-graph',
               figure=salaire_formation),
 
-    html.H2(children='Principal Component Analysis (PCA)', style={'textAlign': 'center'}),
-    dcc.Graph(id='pca-graph',
-              figure=pca),
-
-    html.H2(children='Salaire moyen en fonction du nombre de jours en télétravail', style={'textAlign': 'center'}),
-    dcc.Graph(id='telework-days-bar-chart',
-              figure=telework_days_bar_chart),
-
-    html.Div(id='telework-anova-result'),
-
-    html.H2(children='Matrice des corrélations', style={'textAlign': 'center'}),
-    dcc.Graph(id='correlation-heatmap',
-              figure=correlation_heatmap),
-
-    html.H2(children='Analyse de clusters', style={'textAlign': 'center'}),
-    dcc.Graph(id='clustering-result',
-              figure=clustering_result),
-html.H2(children="L'influence de la situation géographique", style={'textAlign': 'center',"font-size": "500%"}),
-html.Div([
     html.Div([
-        html.H2(children='Salaire moyen en fonction de la région', style={'textAlign': 'center'}),
-        html.Iframe(
-            id='map',
-            srcDoc=open('carteSalaireMoyen.html', 'r').read(),
-            width='100%',
-            height='600px'
-        ),
-    ], className='six columns'),
+        html.H3('Analyse des composantes principales (PCA)', style=styles['sub-header']),
+        dcc.Graph(figure=pca)
+    ], style=styles['graph-container']),
+
+    html.Div([
+        html.H3('Salaire moyen en fonction du nombre de jours en télétravail', style=styles['sub-header']),
+        dcc.Graph(figure=telework_days_bar_chart)
+    ], style=styles['graph-container']),
+
+    html.Div([
+        html.H3('Matrice des corrélations', style=styles['sub-header']),
+        dcc.Graph(figure=correlation_heatmap)
+    ], style=styles['graph-container']),
+
+    html.Div([
+        html.H3('Analyse de clusters', style=styles['sub-header']),
+        dcc.Graph(figure=clustering_result)
+    ], style=styles['graph-container']),
+
+    html.Div([
+        html.Div([
+            html.H3('Salaire moyen en fonction de la région', style=styles['sub-header']),
+            html.Iframe(id='map', srcDoc=open('carteSalaireMoyen.html', 'r').read(), width='100%', height='600px')
+        ], className='six columns'),
 
     html.Div([
         html.H2(children='Salaire moyen en fonction du pays', style={'textAlign': 'center'}),
@@ -281,12 +287,6 @@ html.Div([
         ),
     ], className='six columns'),
 ], className='row'),
-
 ])
-
-
-
-
-
 
 app.run_server(debug=True)

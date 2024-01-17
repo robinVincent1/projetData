@@ -32,8 +32,15 @@ colors = {
 # App layout
 app.layout = html.Div([
     html.H1(children='Dashboard des analyses des salaires', style={'textAlign': 'center', "font-size": "300%"}),
-     dcc.Graph(id='employer-status-boxplot'),
     dcc.Graph(id='seaborn-graph'),
+    html.Div([
+        html.Div([
+    dcc.Graph(id='executive-status-boxplot'),
+], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
+    html.Div([
+     dcc.Graph(id='employer-status-boxplot'),
+], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
+], className='row'),  # Utilisez la classe de grille CSS pour aligner les éléments horizontalement
     html.Div([
         html.Div([
             html.H2(children='Distribution des salaires par sexe', style={'textAlign': 'center'}),
@@ -96,6 +103,20 @@ html.Div([
     ], className='six columns'),
 ], className='row'),
 ])
+
+@app.callback(
+    Output('executive-status-boxplot', 'figure'),
+    [Input('genre-dropdown', 'value'),  # Utiliser un dropdown existant comme déclencheur
+     Input('company-size-dropdown', 'value')]
+)
+def update_executive_status_boxplot(_, __):
+    # Filtrer le DataFrame
+    filtered_df = df[df['Avez-vous un statut de cadre ou assimilé ?'].isin(['Oui', 'Non'])]
+
+    # Créer le boxplot
+    fig = px.box(filtered_df, x='Avez-vous un statut de cadre ou assimilé ?', y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?')
+
+    return fig
 
 @app.callback(
     Output('employer-status-boxplot', 'figure'),

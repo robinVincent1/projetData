@@ -9,6 +9,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+import numpy as np
+
 
 # Load the data
 df = pd.read_excel(Path(__file__).parent / 'Extraction finale_enquete 2023DS (1).xlsx')
@@ -21,6 +23,12 @@ pca_df = StandardScaler().fit_transform(pca_df)
 pca = PCA(n_components=2)
 principal_components = pca.fit_transform(pca_df)
 pca_result_df = pd.DataFrame(data=principal_components, columns=['PC1', 'PC2'])
+# Calculer le salaire moyen par secteur
+mean_salary_by_sector = df.groupby('Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?')['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].mean().reset_index()
+
+sectors = df['Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?'].unique()
+anova_data = [df[df['Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?'] == sector]['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].dropna() for sector in sectors]
+
 
 app = Dash(__name__, external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'])
 
@@ -66,6 +74,24 @@ app.layout = html.Div([
     html.Div(id='anova-result'),
     html.H2(children="Distribution des salaires en fonction de la filiaire d'origine", style={'textAlign': 'center'}),
     dcc.Graph(id='education-graph'),
+    
+
+
+    # Créer un histogramme des salaires moyens par secteur
+    html.H2(children='Salaire moyen par secteur d’activité', style={'textAlign': 'center'}),
+    dcc.Graph(
+        id='mean-salary-by-sector',
+        figure=px.bar(
+            mean_salary_by_sector, 
+            x='Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?', 
+            y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?', 
+            labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire Moyen', 
+                    'Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?': 'Secteur d’Activité'},
+            title='Salaire moyen par secteur d’activité'
+        )
+    ),
+    
+    html.Div(id='sector-anova-result'),
 
     html.H2(children='Principal Component Analysis (PCA)', style={'textAlign': 'center'}),
     dcc.Graph(id='pca-graph'),
@@ -158,6 +184,8 @@ def create_seaborn_plot():
     plotly_fig = tls.mpl_to_plotly(plt.gcf())
     return plotly_fig
 
+
+    
 # Callback to update the genre graph
 @app.callback(
     Output('genre-graph', 'figure'),
@@ -279,5 +307,33 @@ def perform_clustering_analysis(_, __):
                      title='Cluster Analysis of Graduates')
 
     return fig
+
+# Callback pour effectuer l'ANOVA sur le secteur d'activité
+@app.callback(
+    Output('sector-anova-result', 'children'),
+    Input('genre-dropdown', 'value'),
+)
+def perform_sector_anova(_):
+    # Définir un seuil minimum de réponses par secteur
+    min_responses_per_sector = 5
+
+    # Filtrer les secteurs avec suffisamment de réponses
+    anova_data = [df[df['Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?'] == sector]['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].dropna() 
+                  for sector in sectors if len(df[df['Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?'] == sector]) >= min_responses_per_sector]
+
+    # Vérifier s'il y a suffisamment de données pour effectuer l'ANOVA
+    if len(anova_data) > 1:
+        anova_result = stats.f_oneway(*anova_data)
+        return html.Div([
+            html.P(f'ANOVA sur le secteur d\'activité - F-statistic: {anova_result.statistic:.2f}'),
+            html.P(f'ANOVA sur le secteur d\'activité - p-value: {anova_result.pvalue:.4f}')
+        ])
+    else:
+        return html.Div([
+            html.P('Pas assez de données pour effectuer l\'ANOVA sur les secteurs d\'activité.')
+        ])
+
+
+
 
 app.run_server(debug=True)

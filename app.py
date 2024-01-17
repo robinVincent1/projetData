@@ -110,7 +110,7 @@ def create_seaborn_plot():
                  kde_kws={'linewidth': 4})
 
     plt.title('Distribution des salaires brut annuel avec primes')
-    plt.xlabel('Salaire brut annuel avec primes'); plt.ylabel('Densité');
+    plt.xlabel('Salaire brut annuel avec primes'); plt.ylabel('Densité')
 
     # Convert the matplotlib figure to a Plotly figure and return it
     plotly_fig = tls.mpl_to_plotly(plt.gcf())
@@ -254,7 +254,7 @@ app.layout = html.Div([
               figure=salaire_formation),
 
     html.Div([
-        html.H3('Analyse des composantes principales (PCA)', style=styles['sub-header']),
+        html.H3('Analyse des Composantes Principales (PCA) : Salaires, Durée du CDD et Ancienneté dans l\'Emploi', style=styles['sub-header']),
         dcc.Graph(figure=pca)
     ], style=styles['graph-container']),
 

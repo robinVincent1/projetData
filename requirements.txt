@@ -7,6 +7,5 @@ scipy
 plotly.tools
 seaborn
 matplotlib.pyplot
-sklearn.decomposition
-klearn.preprocessing
+scikit-learn
 numpy

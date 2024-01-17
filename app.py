@@ -123,7 +123,7 @@ loi_normale = create_seaborn_plot()
 def create_education_graph():
     dff = df.groupby('Formation')['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].mean().reset_index()
     fig = px.bar(dff, x='Formation', y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?',
-    labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Average Annual Salary with Bonuses'})
+    labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire brut moyen annuel avec primes'})
     return fig
 
 salaire_formation = create_education_graph()
@@ -136,8 +136,8 @@ pca = create_pca_graph()
 
 def create_telework_days_bar_chart():
     fig = px.bar(telework_salary_df, x='Combien de jours par semaine êtes-vous en télétravail ? ', y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?',
-                 labels={'Combien de jours par semaine êtes-vous en télétravail ? ': 'Telework Days per Week',
-                         'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Average Annual Salary with Bonuses'})
+                 labels={'Combien de jours par semaine êtes-vous en télétravail ? ': 'Jours en télétravail par semaine',
+                         'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire brut moyen annuel avec primes'})
     return fig
 
 telework_days_bar_chart = create_telework_days_bar_chart()
@@ -188,8 +188,7 @@ def perform_clustering_analysis():
 
     # Créer une visualisation pour les clusters
     fig = px.scatter(x=clustering_df[:, 0], y=clustering_df[:, 1], color=clusters, 
-                     labels={'x': clustering_columns[0], 'y': clustering_columns[1]},
-                     title='Cluster Analysis of Graduates')
+                     labels={'x': clustering_columns[0], 'y': clustering_columns[1]})
 
     return fig
 
@@ -204,7 +203,7 @@ styles = {
 
 # App layout
 app.layout = html.Div([
-    html.H1('Tableau de bord des analyses des salaires', style=styles['title']),
+    html.H1('Quels sont les principaux facteurs qui influencent la variation des salaires des diplômés ?', style=styles['title']),
     
     html.Div([
         dcc.Graph(figure=loi_normale, style={'width': '70%', 'margin': '0 auto'})

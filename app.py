@@ -110,7 +110,7 @@ def create_seaborn_plot():
                  kde_kws={'linewidth': 4})
 
     plt.title('Distribution des salaires brut annuel avec primes')
-    plt.xlabel('Salaire brut annuel avec primes'); plt.ylabel('Densité');
+    plt.xlabel('Salaire brut annuel avec primes'); plt.ylabel('Densité')
 
     # Convert the matplotlib figure to a Plotly figure and return it
     plotly_fig = tls.mpl_to_plotly(plt.gcf())
@@ -208,7 +208,9 @@ app.layout = html.Div([
     html.Div([
         dcc.Graph(figure=loi_normale, style={'width': '70%', 'margin': '0 auto'})
     ], style=styles['sub-header']),
-    
+
+    html.P("Salaire en fonction de la structure de l'entreprise",style=styles['header']),
+
     html.Div([
         html.Div([
         html.H3('Distribution des salaires par rapport au statut', style=styles['sub-header']),
@@ -222,11 +224,6 @@ app.layout = html.Div([
     ], className='row'),
 
     html.Div([
-        html.Div([
-            html.H3('Distribution des salaires par sexe', style=styles['sub-header']),
-            dcc.Graph(figure=genre_graph)
-        ], className='six columns'),
-
         html.Div([
             html.H3('Distribution des salaires par taille d\'entreprise', style=styles['sub-header']),
             dcc.Graph(figure=employee_count_graph)
@@ -247,13 +244,21 @@ app.layout = html.Div([
         )
     ),
 
+    html.P("Salaire en fonction des caractéristiques de l'individu",style=styles['header']),
+
+    html.Div([
+            html.H3('Distribution des salaires par sexe', style=styles['sub-header']),
+            dcc.Graph(figure=genre_graph)
+        ], className='six columns'),
+
+
     html.Div(id='anova-result'),
     html.H2(children="Distribution des salaires en fonction de la filiaire d'origine",style=styles['sub-header']),
     dcc.Graph(id='education-graph',
               figure=salaire_formation),
 
     html.Div([
-        html.H3('Analyse des composantes principales (PCA)', style=styles['sub-header']),
+        html.H3('Analyse des Composantes Principales (PCA) : Salaires, Durée du CDD et Ancienneté dans l\'Emploi', style=styles['sub-header']),
         dcc.Graph(figure=pca)
     ], style=styles['graph-container']),
 
@@ -271,6 +276,8 @@ app.layout = html.Div([
         html.H3('Analyse de clusters', style=styles['sub-header']),
         dcc.Graph(figure=clustering_result)
     ], style=styles['graph-container']),
+
+    html.P("Salaire en fonction de la situation géographique",style=styles['header']),
 
     html.Div([
         html.Div([

@@ -223,6 +223,20 @@ app.layout = html.Div([
         ], className='six columns'),  # Utilisez les classes de grille CSS pour définir la largeur
     ], className='row'),  # Utilisez la classe de grille CSS pour aligner les éléments horizontalement
 
+            # Créer un histogramme des salaires moyens par secteur
+    html.H2(children='Salaire moyen par secteur d’activité', style={'textAlign': 'center'}),
+    dcc.Graph(
+        id='mean-salary-by-sector',
+        figure=px.bar(
+            mean_salary_by_sector, 
+            x='Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?', 
+            y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?', 
+            labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire Moyen', 
+                    'Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?': 'Secteur d’Activité'},
+            title='Salaire moyen par secteur d’activité'
+        )
+    ),
+
     html.Div(id='anova-result'),
     html.H2(children="Distribution des salaires en fonction de la filiaire d'origine", style={'textAlign': 'center'}),
     dcc.Graph(id='education-graph',
@@ -267,6 +281,7 @@ html.Div([
         ),
     ], className='six columns'),
 ], className='row'),
+
 ])
 
 

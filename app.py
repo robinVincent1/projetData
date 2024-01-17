@@ -4,6 +4,9 @@ import plotly.express as px
 from sklearn.cluster import KMeans
 from pathlib import Path
 from scipy import stats
+import plotly.tools as tls
+import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
@@ -29,6 +32,7 @@ colors = {
 # App layout
 app.layout = html.Div([
     html.H1(children='Dashboard des analyses des salaires', style={'textAlign': 'center', "font-size": "300%"}),
+    dcc.Graph(id='seaborn-graph'),
     html.Div([
         html.Div([
             html.H2(children='Distribution des salaires par sexe', style={'textAlign': 'center'}),
@@ -92,6 +96,31 @@ html.Div([
 ], className='row'),
 ])
 
+@app.callback(
+    Output('seaborn-graph', 'figure'),
+    [Input('genre-dropdown', 'value'),  # Use an existing dropdown as a trigger
+     Input('company-size-dropdown', 'value')]
+)
+def update_seaborn_graph(_, __):
+    return create_seaborn_plot()
+
+def create_seaborn_plot():
+    # Sélectionner les données pour le graphique
+    salary_data = df['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].dropna()
+
+    # Créer le graphique
+    plt.figure(figsize=(10, 6))
+    sns.distplot(salary_data, hist=True, kde=True, 
+                 bins=int(180/5), color = 'darkblue', 
+                 hist_kws={'edgecolor':'black'},
+                 kde_kws={'linewidth': 4})
+
+    plt.title('Distribution des salaires brut annuel avec primes')
+    plt.xlabel('Salaire brut annuel avec primes'); plt.ylabel('Densité');
+
+    # Convert the matplotlib figure to a Plotly figure and return it
+    plotly_fig = tls.mpl_to_plotly(plt.gcf())
+    return plotly_fig
 
 # Callback to update the genre graph
 @app.callback(

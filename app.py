@@ -212,10 +212,12 @@ app.layout = html.Div([
     
     html.Div([
         html.Div([
+        html.H3('Distribution des salaires par rapport au statut', style=styles['sub-header']),
             dcc.Graph(figure=boxplot_cadre, style=styles['graph-container'])
         ], className='six columns'),
 
         html.Div([
+            html.H3('Distribution des salaires par rapport au secteur', style=styles['sub-header']),
             dcc.Graph(figure=boxplot_employer, style=styles['graph-container'])
         ], className='six columns'),
     ], className='row'),

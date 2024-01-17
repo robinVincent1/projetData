@@ -196,7 +196,7 @@ def perform_clustering_analysis():
 clustering_result = perform_clustering_analysis()
 # App layout
 styles = {
-    'title': {'textAlign': 'center', 'padding': '20px', 'fontSize': 30, 'fontWeight': 'bold', 'color': 'black'},
+    'title': {'textAlign': 'center', 'padding': '50px', 'fontSize': 30, 'fontWeight': 'bold', 'color': 'black'},
     'header': {'textAlign': 'center', 'padding': '10px', 'fontSize': 22, 'fontWeight': 'bold', 'color': 'black'},
     'sub-header': {'textAlign': 'center', 'padding': '5px', 'fontSize': 18, 'fontWeight': 'bold', 'color': 'black'},
     'graph-container': {'padding': '20px'}
@@ -208,7 +208,7 @@ app.layout = html.Div([
     
     html.Div([
         dcc.Graph(figure=loi_normale, style={'width': '70%', 'margin': '0 auto'})
-    ], style={'textAlign': 'center'}),
+    ], style=styles['sub-header']),
     
     html.Div([
         html.Div([
@@ -233,7 +233,7 @@ app.layout = html.Div([
     ], className='row'),
 
             # Créer un histogramme des salaires moyens par secteur
-    html.H2(children='Salaire moyen par secteur d’activité', style={'textAlign': 'center'}),
+    html.H2(children='Salaire moyen par secteur d’activité', style=styles['sub-header']),
     dcc.Graph(
         id='mean-salary-by-sector',
         figure=px.bar(
@@ -247,7 +247,7 @@ app.layout = html.Div([
     ),
 
     html.Div(id='anova-result'),
-    html.H2(children="Distribution des salaires en fonction de la filiaire d'origine", style={'textAlign': 'center'}),
+    html.H2(children="Distribution des salaires en fonction de la filiaire d'origine",style=styles['sub-header']),
     dcc.Graph(id='education-graph',
               figure=salaire_formation),
 
@@ -278,7 +278,7 @@ app.layout = html.Div([
         ], className='six columns'),
 
     html.Div([
-        html.H2(children='Salaire moyen en fonction du pays', style={'textAlign': 'center'}),
+        html.H2(children='Salaire moyen en fonction du pays', style=styles['sub-header']),
         html.Iframe(
             id='map',
             srcDoc=open('carteSalaireMoyenWorld.html', 'r').read(),

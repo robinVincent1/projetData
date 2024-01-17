@@ -3,7 +3,7 @@ dash
 plotly.express
 pathlib
 scipy
-plotly.tools
+plotly.
 seaborn
 matplotlib.pyplot
 scikit-learn

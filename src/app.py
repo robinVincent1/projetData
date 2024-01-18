@@ -288,14 +288,14 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.H3('Salaire moyen en fonction de la région', style=styles['sub-header']),
-            html.Iframe(id='map', srcDoc=open('carteSalaireMoyen.html', 'r').read(), width='100%', height='600px')
+            html.Iframe(id='map', srcDoc=open(Path(__file__).parent / 'carteSalaireMoyen.html', 'r').read(), width='100%', height='600px')
         ], className='six columns'),
 
     html.Div([
         html.H2(children='Salaire moyen en fonction du pays', style=styles['sub-header']),
         html.Iframe(
             id='map',
-            srcDoc=open('carteSalaireMoyenWorld.html', 'r').read(),
+            srcDoc=open(Path(__file__).parent / 'carteSalaireMoyenWorld.html', 'r').read(),
             width='100%',
             height='600px'
         ),

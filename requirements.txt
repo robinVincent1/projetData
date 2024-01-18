@@ -1,0 +1,12 @@
+pandas
+dash
+plotly.express
+pathlib
+scipy
+plotly
+seaborn
+matplotlib
+scikit-learn
+numpy
+openpyxl
+gunicorn

@@ -13,7 +13,7 @@ import numpy as np
 
 
 # Load the data
-df = pd.read_excel(Path(__file__).parent / 'Extraction finale_enquete 2023DS (1).xlsx')
+df = pd.read_excel(Path(__file__).parent / '../Extraction finale_enquete 2023DS (1).xlsx')
 telework_salary_df = df.groupby('Combien de jours par semaine êtes-vous en télétravail ? ')['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].mean().reset_index()
 pca_columns = ['Quel est votre salaire brut ANNUEL AVEC PRIMES ?','Quelle est la durée de votre CDD ?','Depuis combien de mois occupez-vous cet emploi ?'] # Replace with actual column names
 pca_df = df[pca_columns].dropna()
@@ -102,17 +102,19 @@ def create_seaborn_plot():
     # Sélectionner les données pour le graphique
     salary_data = df['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].dropna()
 
-    # Créer le graphique
-    plt.figure(figsize=(10, 6))
+    # Créer le graphique matplotlib avec la taille ajustée
+    plt.figure(figsize=(3, 2))  # Ajustez la taille ici (largeur, hauteur)
+
     sns.distplot(salary_data, hist=True, kde=True, 
-                 bins=int(180/5), color = 'darkblue', 
-                 hist_kws={'edgecolor':'black'},
+                 bins=int(180/5), color='darkblue', 
+                 hist_kws={'edgecolor': 'black'},
                  kde_kws={'linewidth': 4})
 
     plt.title('Distribution des salaires brut annuel avec primes')
-    plt.xlabel('Salaire brut annuel avec primes'); plt.ylabel('Densité')
+    plt.xlabel('Salaire brut annuel avec primes')
+    plt.ylabel('Densité')
 
-    # Convert the matplotlib figure to a Plotly figure and return it
+    # Convertir le graphique matplotlib en une figure Plotly et la renvoyer
     plotly_fig = tls.mpl_to_plotly(plt.gcf())
     return plotly_fig
 
@@ -123,7 +125,7 @@ loi_normale = create_seaborn_plot()
 def create_education_graph():
     dff = df.groupby('Formation')['Quel est votre salaire brut ANNUEL AVEC PRIMES ?'].mean().reset_index()
     fig = px.bar(dff, x='Formation', y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?',
-    labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Average Annual Salary with Bonuses'})
+    labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire brut moyen annuel avec primes'})
     return fig
 
 salaire_formation = create_education_graph()
@@ -136,8 +138,8 @@ pca = create_pca_graph()
 
 def create_telework_days_bar_chart():
     fig = px.bar(telework_salary_df, x='Combien de jours par semaine êtes-vous en télétravail ? ', y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?',
-                 labels={'Combien de jours par semaine êtes-vous en télétravail ? ': 'Telework Days per Week',
-                         'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Average Annual Salary with Bonuses'})
+                 labels={'Combien de jours par semaine êtes-vous en télétravail ? ': 'Jours en télétravail par semaine',
+                         'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire brut moyen annuel avec primes'})
     return fig
 
 telework_days_bar_chart = create_telework_days_bar_chart()
@@ -188,8 +190,7 @@ def perform_clustering_analysis():
 
     # Créer une visualisation pour les clusters
     fig = px.scatter(x=clustering_df[:, 0], y=clustering_df[:, 1], color=clusters, 
-                     labels={'x': clustering_columns[0], 'y': clustering_columns[1]},
-                     title='Cluster Analysis of Graduates')
+                     labels={'x': clustering_columns[0], 'y': clustering_columns[1]})
 
     return fig
 
@@ -204,12 +205,10 @@ styles = {
 
 # App layout
 app.layout = html.Div([
-    html.H1('Tableau de bord des analyses des salaires', style=styles['title']),
-    
-    html.Div([
-        dcc.Graph(figure=loi_normale, style={'width': '70%', 'margin': '0 auto'})
-    ], style=styles['sub-header']),
-    
+    html.H1('Quels sont les principaux facteurs qui influencent la variation des salaires des diplômés ?', style=styles['title']),
+
+    html.P("Salaire en fonction de la structure de l'entreprise",style=styles['header']),
+
     html.Div([
         html.Div([
         html.H3('Distribution des salaires par rapport au statut', style=styles['sub-header']),
@@ -223,11 +222,6 @@ app.layout = html.Div([
     ], className='row'),
 
     html.Div([
-        html.Div([
-            html.H3('Distribution des salaires par sexe', style=styles['sub-header']),
-            dcc.Graph(figure=genre_graph)
-        ], className='six columns'),
-
         html.Div([
             html.H3('Distribution des salaires par taille d\'entreprise', style=styles['sub-header']),
             dcc.Graph(figure=employee_count_graph)
@@ -247,6 +241,20 @@ app.layout = html.Div([
             title='Salaire moyen par secteur d’activité',
         )
     ),
+
+    html.P("Salaire en fonction des caractéristiques de l'individu",style=styles['header']),
+    html.Div([
+        html.Div([
+            html.H3('Distribution des salaires par sexe', style=styles['sub-header']),
+            dcc.Graph(figure=genre_graph)
+        ], className='six columns'),
+
+        html.Div([
+            html.H3('Loi normale', style=styles['sub-header']),
+            dcc.Graph(figure=loi_normale,style={'width': '5%', 'height': '5%', 'margin': '0 auto', 'z-index': '1'})
+        ], style=styles['graph-container']),
+
+    ], className='row'),
 
     html.Div(id='anova-result'),
     html.H2(children="Distribution des salaires en fonction de la filiaire d'origine",style=styles['sub-header']),
@@ -273,17 +281,19 @@ app.layout = html.Div([
         dcc.Graph(figure=clustering_result)
     ], style=styles['graph-container']),
 
+    html.P("Salaire en fonction de la situation géographique",style=styles['header']),
+
     html.Div([
         html.Div([
             html.H3('Salaire moyen en fonction de la région', style=styles['sub-header']),
-            html.Iframe(id='map', srcDoc=open('carteSalaireMoyen.html', 'r').read(), width='100%', height='600px')
+            html.Iframe(id='map', srcDoc=open(Path(__file__).parent / 'carteSalaireMoyen.html', 'r').read(), width='100%', height='600px')
         ], className='six columns'),
 
     html.Div([
         html.H2(children='Salaire moyen en fonction du pays', style=styles['sub-header']),
         html.Iframe(
             id='map',
-            srcDoc=open('carteSalaireMoyenWorld.html', 'r').read(),
+            srcDoc=open(Path(__file__).parent / 'carteSalaireMoyenWorld.html', 'r').read(),
             width='100%',
             height='600px'
         ),
@@ -291,4 +301,5 @@ app.layout = html.Div([
 ], className='row'),
 ])
 
+server = app.server
 app.run_server(debug=True)

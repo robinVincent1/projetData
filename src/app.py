@@ -207,41 +207,6 @@ styles = {
 app.layout = html.Div([
     html.H1('Quels sont les principaux facteurs qui influencent la variation des salaires des diplômés ?', style=styles['title']),
 
-    html.P("Salaire en fonction de la structure de l'entreprise",style=styles['header']),
-
-    html.Div([
-        html.Div([
-        html.H3('Distribution des salaires par rapport au statut', style=styles['sub-header']),
-            dcc.Graph(figure=boxplot_cadre, style=styles['graph-container'])
-        ], className='six columns'),
-
-        html.Div([
-            html.H3('Distribution des salaires par rapport au secteur', style=styles['sub-header']),
-            dcc.Graph(figure=boxplot_employer, style=styles['graph-container'])
-        ], className='six columns'),
-    ], className='row'),
-
-    html.Div([
-        html.Div([
-            html.H3('Distribution des salaires par taille d\'entreprise', style=styles['sub-header']),
-            dcc.Graph(figure=employee_count_graph)
-        ], className='six columns'),
-    ], className='row'),
-
-            # Créer un histogramme des salaires moyens par secteur
-    html.H2(children='Salaire moyen par secteur d’activité', style=styles['sub-header']),
-    dcc.Graph(
-        id='mean-salary-by-sector',
-        figure=px.bar(
-            mean_salary_by_sector, 
-            x='Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?', 
-            y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?', 
-            labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire Moyen', 
-                    'Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?': 'Secteur d’Activité'},
-            title='Salaire moyen par secteur d’activité',
-        )
-    ),
-    html.Div(anova_result),
     html.P("Salaire en fonction des caractéristiques de l'individu",style=styles['header']),
     html.Div([
         html.Div([
@@ -283,6 +248,42 @@ app.layout = html.Div([
 
     html.Div(telework_anova_result),
 
+    html.P("Salaire en fonction de la structure de l'entreprise",style=styles['header']),
+
+    html.Div([
+        html.Div([
+        html.H3('Distribution des salaires par rapport au statut', style=styles['sub-header']),
+            dcc.Graph(figure=boxplot_cadre, style=styles['graph-container'])
+        ], className='six columns'),
+
+        html.Div([
+            html.H3('Distribution des salaires par rapport au secteur', style=styles['sub-header']),
+            dcc.Graph(figure=boxplot_employer, style=styles['graph-container'])
+        ], className='six columns'),
+    ], className='row'),
+
+    html.Div([
+        html.Div([
+            html.H3('Distribution des salaires par taille d\'entreprise', style=styles['sub-header']),
+            dcc.Graph(figure=employee_count_graph)
+        ], className='six columns'),
+    ], className='row'),
+
+            # Créer un histogramme des salaires moyens par secteur
+    html.H2(children='Salaire moyen par secteur d’activité', style=styles['sub-header']),
+    dcc.Graph(
+        id='mean-salary-by-sector',
+        figure=px.bar(
+            mean_salary_by_sector, 
+            x='Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?', 
+            y='Quel est votre salaire brut ANNUEL AVEC PRIMES ?', 
+            labels={'Quel est votre salaire brut ANNUEL AVEC PRIMES ?': 'Salaire Moyen', 
+                    'Quel est le secteur d\'activité de votre entreprise (celle qui vous rémunère)?': 'Secteur d’Activité'},
+            title='Salaire moyen par secteur d’activité',
+        )
+    ),
+    html.Div(anova_result),
+    
     html.P("Salaire en fonction de la situation géographique",style=styles['header']),
 
     html.Div([

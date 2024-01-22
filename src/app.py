@@ -241,7 +241,7 @@ app.layout = html.Div([
             title='Salaire moyen par secteur d’activité',
         )
     ),
-
+    html.Div(anova_result),
     html.P("Salaire en fonction des caractéristiques de l'individu",style=styles['header']),
     html.Div([
         html.Div([
@@ -280,6 +280,8 @@ app.layout = html.Div([
         html.H3('Analyse de clusters', style=styles['sub-header']),
         dcc.Graph(figure=clustering_result)
     ], style=styles['graph-container']),
+
+    html.Div(telework_anova_result),
 
     html.P("Salaire en fonction de la situation géographique",style=styles['header']),
 
